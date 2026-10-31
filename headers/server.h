@@ -6,7 +6,7 @@
 #include "serviceLogic.h"
 
 
-class HttpServer {
+class HttpServer final {
 
 	const std::string_view address_;	
 	const unsigned short port_;
@@ -18,7 +18,7 @@ class HttpServer {
 		http::response<http::string_body> response (http::status::ok, request.version());
 		response.set(http::field::server, httpConstants::SERVER_FIELD);
 		response.set(http::field::content_type, httpConstants::CONTENT_TYPE_FIELD);
-		response.body() = serviceLogic_.processRequestTarget(request.target());
+		response.body() = serviceLogic_.processRequest(request.target(), request.body());
 		return response;
 	}
 

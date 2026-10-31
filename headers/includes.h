@@ -5,6 +5,8 @@
 #include <iostream>
 #include <array>
 #include <vector>
+#include <unordered_map>
+#include <optional>
 
 #include <boost/json.hpp>
 

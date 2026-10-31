@@ -5,14 +5,14 @@
 #include "customer.h"
 
 
-struct ServiceLogic {
+struct ServiceLogic final {
 public:
 	ServiceLogic() { };
 
 	template <typename T>
 	using SitsArray = std::array<
-		std::array<T, sitsConstants::ROWS_COUNT>,
-		sitsConstants::COLUMNS_COUNT
+		std::array<T, seatsConstants::ROWS_COUNT>,
+		seatsConstants::COLUMNS_COUNT
 	>;
 
 	std::vector<Customer> customers {};
@@ -44,7 +44,8 @@ public:
 		return "";	
 	}
 
-	std::string processRequestTarget(const std::string_view target)
+	std::string processRequest(
+		const std::string_view target, const std::string_view body)
 	{
 		const auto parsedData = urls::parse_origin_form(target);	
 		urls::url_view dataView = *parsedData;
