@@ -2,6 +2,8 @@
 #define SERVER_H
 
 #include "includes.h"
+#include "settings.h"
+#include "serviceLogic.h"
 
 
 class HttpServer {
@@ -9,15 +11,14 @@ class HttpServer {
 	const std::string_view address_;	
 	const unsigned short port_;
 	asio::io_context context_;
+	ServiceLogic serviceLogic_;
 
 	http::response<http::string_body> processRequest_(const http::request<http::string_body>& request)
 	{
 		http::response<http::string_body> response (http::status::ok, request.version());
-		response.set(http::field::server, "Boost.Beast/server");
-		response.set(http::field::content_type, "text/plain");
-
-		// ...processing...
-		
+		response.set(http::field::server, httpConstants::SERVER_FIELD);
+		response.set(http::field::content_type, httpConstants::CONTENT_TYPE_FIELD);
+		response.body() = serviceLogic_.processRequestTarget(request.target());
 		return response;
 	}
 
@@ -46,7 +47,7 @@ class HttpServer {
 
 public:
 	HttpServer(std::string_view address, unsigned short port)
-		: address_(address), port_(port), context_{1} { }
+		: address_(address), port_(port), context_(), serviceLogic_() { }
 
 	HttpServer(const HttpServer&) = delete;
 	HttpServer& operator=(const HttpServer&) = delete;
