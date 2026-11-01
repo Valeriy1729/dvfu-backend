@@ -57,3 +57,5 @@ HttpServer (server.h)  →  ServiceLogic (serviceLogic.h)
 // GET /seats
 [ [ [0, 0], 1000 ], [ [0, 1], 1100 ] ]
 ```
+
+**Выполнил: Мигачев В., Б9124-02.03.01мо**
