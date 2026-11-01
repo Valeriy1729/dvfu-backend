@@ -13,14 +13,34 @@ class HttpServer final {
 	asio::io_context context_;
 	ServiceLogic serviceLogic_;
 
-	http::response<http::string_body> processRequest_(const http::request<http::string_body>& request)
+	void printRequest(const http::request<http::string_body>& request) const
 	{
+		std::cout << "[INFO]: GOT REQUEST:\n" << request << std::endl;
+	}
+	void printResponse(const http::response<http::string_body>& response) const
+	{
+		std::cout << "[INFO]: SENDING RESPONSE:\n" << response << "\n\n" << std::endl;
+	}
+
+	http::response<http::string_body> processRequest_(
+		const http::request<http::string_body>& request)
+	{
+		printRequest(request);
+
 		http::response<http::string_body> response (http::status::ok, request.version());
 		response.set(http::field::server, httpConstants::SERVER_FIELD);
 		response.set(http::field::content_type, httpConstants::CONTENT_TYPE_FIELD);
-		auto [responseBody, responseResult] = serviceLogic_.processRequest(
-			request.target(), request.body(), request.method());
-		response.body() = responseBody, response.result(responseResult);
+
+		try {
+			auto [responseBody, responseResult] = serviceLogic_.processRequest(
+				request.target(), request.body(), request.method());
+			response.body() = responseBody, response.result(responseResult);
+		} catch(std::exception& e) {
+			response.body() = "Exception oruccred: " + std::string(e.what());
+			response.result(http::status::bad_request);
+		}
+
+		printResponse(response);
 		return response;
 	}
 
@@ -58,6 +78,7 @@ public:
 	{
 		tcp::endpoint endpoint {asio::ip::make_address(address_), port_};
 		asio::co_spawn(context_, listen_(endpoint), asio::detached);	
+		std::cout << "[INFO]: Server is listening..." << std::endl;
 		context_.run();
 	}
 };

@@ -5,7 +5,14 @@
 
 int main(int argc, char** argv)
 {
-	HttpServer server {"127.0.0.1", 1111};	
+	if(argc != 3)
+		throw std::invalid_argument("Usage: ./my_app <host> <port>");
+
+	HttpServer server {
+		argv[1],  // host
+		static_cast<unsigned short>(std::stoul(argv[2]))  // port
+	};	
+
 	server.startListening();
 	return EXIT_SUCCESS;
 }

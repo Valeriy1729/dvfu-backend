@@ -8,8 +8,16 @@ find_package(Threads REQUIRED)
 
 find_package(Boost REQUIRED COMPONENTS system url json)
 
-add_executable(
-	my_app src/main.cpp src/serviceLogic.cpp
+add_executable(my_app
+	src/main.cpp
+	src/serviceLogic/addMoney.cpp
+	src/serviceLogic/createCustomer.cpp
+	src/serviceLogic/deleteCustomer.cpp
+	src/serviceLogic/getAvaliableSeats.cpp
+	src/serviceLogic/getBalance.cpp
+	src/serviceLogic/getCustomer.cpp
+	src/serviceLogic/reserveSeat.cpp
+	src/serviceLogic/updateCustomer.cpp
 )
 
 target_include_directories(my_app PRIVATE headers)

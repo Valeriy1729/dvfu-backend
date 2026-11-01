@@ -43,11 +43,6 @@ public:
 		return hasDiscount_;	
 	}
 
-	void changeName(std::string newName)
-	{
-		name_ = std::move(newName);
-	}
-
 	~Customer() = default;
 };
 
