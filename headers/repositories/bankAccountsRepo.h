@@ -6,6 +6,8 @@
 
 
 class BankAccountsRepository final {
+
+	unsigned creatingBankAccountId_ {0};
 	std::unordered_map<unsigned, BankAccount> bankAccounts_;
 
 	BankAccountsRepository() { }
@@ -15,11 +17,18 @@ public:
 	BankAccountsRepository(const BankAccountsRepository&) = delete;
 	BankAccountsRepository& operator=(const BankAccountsRepository&) = delete;
 
-	bool add(unsigned id, unsigned customerId) &
+	std::optional<BankAccount> add() &
 	{
-		std::pair<unsigned, BankAccount> pair (id, {id, customerId});
+		BankAccount newBankAccount{++creatingBankAccountId_};
+		std::pair<unsigned, BankAccount> pair (creatingBankAccountId_, newBankAccount);
 		auto operationResult = bankAccounts_.insert(pair);	
-		return operationResult.second;
+		return (operationResult.second == true ?
+			std::optional<BankAccount>(newBankAccount) : std::nullopt);
+	}
+
+	size_t delete_(unsigned bankAccountId) &
+	{
+		return bankAccounts_.erase(bankAccountId);	
 	}
 
 	std::optional<BankAccount> findById(unsigned id) &

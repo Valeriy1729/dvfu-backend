@@ -6,9 +6,11 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 find_package(Threads REQUIRED)
 
-find_package(Boost REQUIRED COMPONENTS system url)
+find_package(Boost REQUIRED COMPONENTS system url json)
 
-add_executable(my_app src/main.cpp)
+add_executable(
+	my_app src/main.cpp src/serviceLogic.cpp
+)
 
 target_include_directories(my_app PRIVATE headers)
 
@@ -17,6 +19,7 @@ target_link_libraries(my_app PRIVATE
     Boost::system      
     Threads::Threads   
     Boost::url
+    Boost::json
 )
 
 

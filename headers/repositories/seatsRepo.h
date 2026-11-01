@@ -3,6 +3,7 @@
 
 #include "includes.h"
 #include "customer.h"
+#include "settings.h"
 
 
 class SeatsRepository final {

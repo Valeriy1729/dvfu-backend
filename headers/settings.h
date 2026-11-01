@@ -40,6 +40,11 @@ constexpr SeatsMatrix<unsigned> costs {{
 }  // seatsConstants
 
 
+namespace customersConstants {
+	
+constexpr unsigned DISCOUNT_PERIOD = 5;
+
+}  // customersConstants
 
 
 #endif  // SETTINGS_H

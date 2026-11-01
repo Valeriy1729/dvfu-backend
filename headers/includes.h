@@ -18,6 +18,7 @@
 
 #include <boost/url/url_view.hpp>
 #include <boost/url/parse.hpp>
+#include <boost/url/parse_query.hpp>
 
 #include <boost/asio.hpp>
 #include <boost/asio/ip/tcp.hpp>

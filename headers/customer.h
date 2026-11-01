@@ -6,12 +6,14 @@
 
 class Customer final {
 	std::string name_;
+	bool hasDiscount_;
 	const unsigned id_, bankAccountId_;
 
 public:
-	Customer(std::string_view name,
+	Customer(std::string_view name, bool hasDiscount,
 		unsigned id, unsigned bankAccountId)
-		: name_(name), id_(id), bankAccountId_(bankAccountId) { }
+	: name_(name), hasDiscount_(hasDiscount),
+	  id_(id), bankAccountId_(bankAccountId) { }
 
 	Customer(const Customer&) = default;
 	Customer& operator=(const Customer&) = default;
@@ -19,6 +21,11 @@ public:
 	unsigned getId() const noexcept
 	{
 		return id_;
+	}
+
+	void updateName(const std::string& newName)
+	{
+		name_ = newName;	
 	}
 
 	unsigned getBankAccountId() const noexcept
@@ -31,6 +38,11 @@ public:
 		return name_;
 	}
 
+	bool hasDiscount() const noexcept
+	{
+		return hasDiscount_;	
+	}
+
 	void changeName(std::string newName)
 	{
 		name_ = std::move(newName);
@@ -40,14 +52,13 @@ public:
 };
 
 
-// for unordered_set
-namespace std {
-template <> struct hash<Customer> {
-	size_t operator()(const Customer& customer) const
-	{
-		return static_cast<size_t>(customer.getId());	
-	}		
-};		
+// for json serialization
+inline void tag_invoke(json::value_from_tag, json::value& jv, const Customer& customer)
+{
+	jv = {
+		{ "name", customer.getName() },
+		{ "hasDiscount", customer.hasDiscount() }
+	};
 }
 
 

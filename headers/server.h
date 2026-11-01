@@ -18,7 +18,9 @@ class HttpServer final {
 		http::response<http::string_body> response (http::status::ok, request.version());
 		response.set(http::field::server, httpConstants::SERVER_FIELD);
 		response.set(http::field::content_type, httpConstants::CONTENT_TYPE_FIELD);
-		response.body() = serviceLogic_.processRequest(request.target(), request.body());
+		auto [responseBody, responseResult] = serviceLogic_.processRequest(
+			request.target(), request.body(), request.method());
+		response.body() = responseBody, response.result(responseResult);
 		return response;
 	}
 

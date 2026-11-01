@@ -5,12 +5,12 @@
 
 
 class BankAccount final {
-	unsigned id_, customerId_;
+	unsigned id_;
 	long long moneyAmount_;
 
 public:
-	BankAccount(unsigned id, unsigned customerId) noexcept
-		: id_(id), customerId_(customerId), moneyAmount_(0) { }
+	BankAccount(unsigned id) noexcept
+		: id_(id), moneyAmount_(0) { }
 	BankAccount(const BankAccount&) = default;
 	BankAccount& operator=(const BankAccount&) = default;
 
@@ -19,11 +19,6 @@ public:
 	unsigned getId() const
 	{
 		return id_;	
-	}
-
-	unsigned getCustomerId() const
-	{
-		return customerId_;	
 	}
 
 	OperationCode addMoney(long long amount) & noexcept
@@ -52,16 +47,6 @@ public:
 	}
 	
 };
-
-// for unordered_set
-namespace std {
-template <> struct hash<BankAccount> {
-	size_t operator()(const BankAccount& bankAccount) const
-	{
-		return static_cast<size_t>(bankAccount.getId());	
-	}		
-};		
-}
 
 
 #endif  // BANK_ACCOUNT_H

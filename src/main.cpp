@@ -1,6 +1,7 @@
 #include "server.h"
 #include "repositories/customersRepo.h"
 #include "repositories/bankAccountsRepo.h"
+#include "repositories/seatsRepo.h"
 
 int main(int argc, char** argv)
 {
