@@ -6,65 +6,39 @@
 
 
 struct ServiceLogic final {
-public:
-	ServiceLogic() { };
 
-	template <typename T>
-	using SitsArray = std::array<
-		std::array<T, seatsConstants::ROWS_COUNT>,
-		seatsConstants::COLUMNS_COUNT
-	>;
+	ServiceLogic() = default;
 
-	std::vector<Customer> customers {};
-	SitsArray<bool> reservations {false};
-	const SitsArray<unsigned> sitsCosts {};
+	using ResponsePair = std::pair<std::string, http::status>;
 
-	std::string updateCustomer(urls::params_view params)
-	{
-		return "";	
-	}
-	std::string getCustomer(urls::params_view params)
-	{
-		return "";	
-	}
-	std::string createCustomer(urls::params_view params)
-	{
-		return "";	
-	}
-	std::string deleteCustomer(urls::params_view params)
-	{
-		return "";	
-	}
-	std::string buyTicket(urls::params_view params)
-	{
-		return "";	
-	}
-	std::string getAvaliableSeats()
-	{
-		return "";	
-	}
+	ResponsePair updateCustomer(urls::params_view params, std::string_view body);
+	ResponsePair getCustomer(urls::params_view params, std::string_view body);
+	ResponsePair createCustomer(urls::params_view params, std::string_view body);
+	ResponsePair deleteCustomer(urls::params_view params, std::string_view body);
+	ResponsePair buyTicket(urls::params_view params, std::string_view body);
+	ResponsePair getAvaliableSeats();
 
-	std::string processRequest(
+	ResponsePair processRequest(
 		const std::string_view target, const std::string_view body)
 	{
 		const auto parsedData = urls::parse_origin_form(target);	
 		urls::url_view dataView = *parsedData;
-		std::string result;
+		ResponsePair result;
 
 		if(dataView.path() == "/updateCustomer") {
-			result = updateCustomer(dataView.params());
+			result = updateCustomer(dataView.params(), body);
 		} else if (dataView.path() == "/getCustomer") {
-			result = getCustomer(dataView.params());
+			result = getCustomer(dataView.params(), body);
 		} else if(dataView.path() == "/createCustomer") {
-			result = createCustomer(dataView.params());
+			result = createCustomer(dataView.params(), body);
 		} else if(dataView.path() == "/deleteCustomer") {
-			result = deleteCustomer(dataView.params());
+			result = deleteCustomer(dataView.params(), body);
 		} else if(dataView.path() == "/buyTicket") {
-			result = buyTicket(dataView.params());
+			result = buyTicket(dataView.params(), body);
 		} else if(dataView.path() == "/getAvaliableSeats") {
 			result = getAvaliableSeats();
 		} else {
-			result = "Unknown target";
+			result = {"Unknown target", http::status::not_found};
 		}
 
 		return result;

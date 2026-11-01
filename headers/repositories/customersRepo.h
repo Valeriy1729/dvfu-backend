@@ -22,10 +22,11 @@ public:
 		return operationResult.second;
 	}
 
-	Customer* findByName(const std::string& name) &
+	std::optional<Customer> findByName(const std::string& name) &
 	{
 		auto it = customers_.find(name);			
-		return (it != customers_.end() ? &(it->second) : nullptr);
+		return (it != customers_.end() ?
+			std::optional<Customer>(it->second) : std::nullopt);
 	}
 
 	static CustomersRepository& get()

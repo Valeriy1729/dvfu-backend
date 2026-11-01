@@ -22,10 +22,11 @@ public:
 		return operationResult.second;
 	}
 
-	BankAccount* findById(unsigned id) &
+	std::optional<BankAccount> findById(unsigned id) &
 	{
 		auto it = bankAccounts_.find(id);			
-		return (it != bankAccounts_.end() ? &(it->second) : nullptr);
+		return (it != bankAccounts_.end() ?
+			std::optional<BankAccount>(it->second) : std::nullopt);
 	}
 
 	static BankAccountsRepository& get()
