@@ -10,7 +10,7 @@ HTTP-сервис для бронирования мест в кинотеатр
 ## Сборка и запуск
 
 ```bash
-mkdir build && cd build && cmake .. && cmake --build .
+mkdir build && cd build && cmake .. && cmake --build . -j$(nproc)
 ./my_app <host> <port>
 # Пример: ./my_app 127.0.0.1 8080
 ```
