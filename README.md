@@ -1,4 +1,4 @@
-# dvfu-backend
+# Cinema Booking Service
 
 HTTP-сервис для бронирования мест в кинотеатре с управлением клиентами и банковскими счетами. C++20, Boost.Asio/Beast (async coroutines), Boost.JSON.
 
