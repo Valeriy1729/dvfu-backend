@@ -10,7 +10,12 @@ find_package(
 
 
 add_library(${PROJECT_NAME}_objs OBJECT
+	src/models/bankAccount.cpp
+	src/models/customer.cpp
 	src/http_handler.cpp
+	src/repositories/bankAccountRepository.cpp
+	src/repositories/customersRepository.cpp
+	src/repositories/seatsRepository.cpp
 )
 target_link_libraries(${PROJECT_NAME}_objs userver::core)
 target_include_directories(${PROJECT_NAME}_objs PUBLIC src headers)

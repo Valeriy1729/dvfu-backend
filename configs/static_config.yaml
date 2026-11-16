@@ -29,5 +29,6 @@ components_manager:
             path: /cinema-service  
             method: GET,POST,DELETE,PATCH
             task_processor: main-task-processor
+            parse_args_from_body: true
 
 

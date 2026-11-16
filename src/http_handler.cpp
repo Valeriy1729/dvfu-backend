@@ -7,7 +7,7 @@ std::string HttpHandler::HandleRequest(
 	userver::server::http::HttpRequest& request,
 	userver::server::request::RequestContext&) const
 {
-	return "hello";
+	return "..."; // ... 
 }
 
 
