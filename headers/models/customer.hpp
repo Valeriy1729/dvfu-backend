@@ -2,6 +2,7 @@
 #define CUSTOMER_H
 
 #include <string>
+#include <userver/formats/json.hpp>
 
 namespace service {
 
@@ -11,9 +12,10 @@ namespace models {
 class Customer final {
 	std::string name_;
 	bool hasDiscount_;
-	const unsigned id_, bankAccountId_;
+	unsigned id_, bankAccountId_;
 
 public:
+	Customer() = default;
 	Customer(std::string_view name, bool hasDiscount,
 		unsigned id, unsigned bankAccountId)
 	: name_(name), hasDiscount_(hasDiscount),
@@ -31,17 +33,16 @@ public:
 	~Customer() = default;
 };
 
-
-#if(0)
-// for json serialization
-inline void tag_invoke(json::value_from_tag, json::value& jv, const Customer& customer)
+// for JSON, BSON, YAML,... serialization
+template <typename Format>
+Format Serialize(const Customer& customer,
+	userver::formats::serialize::To<Format>)
 {
-	jv = {
-		{ "name", customer.getName() },
-		{ "hasDiscount", customer.hasDiscount() }
-	};
+	typename Format::Builder builder;
+	builder["name"] = customer.getName();
+	builder["hasDiscount"] = customer.hasDiscount();
+	return builder.ExtractValue();
 }
-#endif
 
 
 }  // models

@@ -16,7 +16,6 @@ class BankAccountsRepository final {
 	BankAccountsRepository() { }
 
 public:
-
 	BankAccountsRepository(const BankAccountsRepository&) = delete;
 	BankAccountsRepository& operator=(const BankAccountsRepository&) = delete;
 

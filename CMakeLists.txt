@@ -8,15 +8,32 @@ find_package(
     REQUIRED
 )
 
+set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_EXTENSIONS OFF)
+
 
 add_library(${PROJECT_NAME}_objs OBJECT
 	src/models/bankAccount.cpp
 	src/models/customer.cpp
-	src/http_handler.cpp
+	src/httpHandler.cpp
+
 	src/repositories/bankAccountRepository.cpp
 	src/repositories/customersRepository.cpp
 	src/repositories/seatsRepository.cpp
+
+	src/serviceLogic/_throwResourceNotFound.cpp
+	src/serviceLogic/_processRequest.cpp
+	src/serviceLogic/addMoney.cpp
+	src/serviceLogic/createCustomer.cpp
+	src/serviceLogic/getCustomer.cpp
+	src/serviceLogic/updateCustomer.cpp
+	src/serviceLogic/deleteCustomer.cpp
+	src/serviceLogic/getAvaliableSeats.cpp
+	src/serviceLogic/getBalance.cpp
+	src/serviceLogic/reserveSeat.cpp
 )
+
 target_link_libraries(${PROJECT_NAME}_objs userver::core)
 target_include_directories(${PROJECT_NAME}_objs PUBLIC src headers)
 

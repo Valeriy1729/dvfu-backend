@@ -1,6 +1,6 @@
 #include <userver/components/minimal_server_component_list.hpp>
 #include <userver/utils/daemon_run.hpp>
-#include "http_handler.hpp"
+#include "httpHandler.hpp"
 
 int main(int argc, char* argv[])
 {

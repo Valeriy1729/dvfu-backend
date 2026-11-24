@@ -2,6 +2,9 @@
 #define HTTP_HANDLER_H
 
 #include <userver/server/handlers/http_handler_base.hpp>
+#include <userver/server/http/http_request.hpp>
+
+#include "serviceLogic.hpp"
 
 namespace service {
 

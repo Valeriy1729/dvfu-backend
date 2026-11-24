@@ -11,6 +11,7 @@ class BankAccount final {
 	long long moneyAmount_;
 
 public:
+	BankAccount() = default;
 	BankAccount(unsigned id) noexcept
 		: id_(id), moneyAmount_(0) { }
 	BankAccount(const BankAccount&) = default;
