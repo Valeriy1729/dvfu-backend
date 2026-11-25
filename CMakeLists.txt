@@ -8,7 +8,7 @@ find_package(
     REQUIRED
 )
 
-set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
@@ -44,7 +44,7 @@ target_link_libraries(${PROJECT_NAME} ${PROJECT_NAME}_objs)
 
 
 # unittests
-add_executable(${PROJECT_NAME}-unittest unittests/test.cpp)
+add_executable(${PROJECT_NAME}-unittest unittests/serviceLogic_test.cpp)
 target_link_libraries(${PROJECT_NAME}-unittest ${PROJECT_NAME}_objs userver::utest)
 add_google_tests(${PROJECT_NAME}-unittest)
 

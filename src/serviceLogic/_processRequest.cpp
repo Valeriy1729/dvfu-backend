@@ -29,7 +29,7 @@ ResponsePair _processRequest(const HttpRequest& request)
 		case HttpMethod::kPatch:
 			if(suffix == "customers") result = updateCustomer(request);
 			else if(suffix == "balance") result = addMoney(request);
-			else if(suffix == "seats/reserve") result = addMoney(request);
+			else if(suffix == "reserve") result = reserveSeat(request);
 			else _throwResourceNotFound("Unknown suffix for method PATCH");
 			break;
 		default:

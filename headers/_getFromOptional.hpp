@@ -9,17 +9,12 @@ namespace service {
 namespace logic {
 
 
-template <typename F, typename T>
-concept _OptionalLambda = requires (F getLambda) {
-	{ getLambda() } -> std::convertible_to<std::optional<T>>; 		
-};
-
-template <typename T, _OptionalLambda<T> F>
-T _getFromOptional(F&& getLambda, const std::string& errorMsg) {
-	std::optional<T> result = getLambda();
-	if(!result.has_value())
+template <typename T>
+T _getFromOptional(std::optional<T> optional, const std::string& errorMsg)
+{
+	if(!optional.has_value())
 		throw _BadRequestException(errorMsg);
-	return result.value();
+	return optional.value();
 }
 
 

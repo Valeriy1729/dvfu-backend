@@ -2,14 +2,19 @@
 #define SERVICE_LOGIC
 
 #include <string>
+#include <fmt/format.h>
+
 #include <userver/server/http/http_request.hpp>
 #include <userver/server/http/http_response.hpp>
 #include <userver/http/status_code.hpp>
 #include <userver/server/handlers/exceptions.hpp>
 #include <userver/utils/from_string.hpp>
 
+#include <userver/engine/mutex.hpp>
+
 #include "models/customer.hpp"
 
+#include "_pairSerialization.hpp"
 #include "_getFromOptional.hpp"
 #include "_executeWithCheck.hpp"
 #include "_getArgWithCheck.hpp"
@@ -27,7 +32,11 @@ using userver::server::http::HttpRequest;
 using userver::server::http::HttpResponse;
 using userver::server::http::HttpStatus;
 using userver::server::http::HttpMethod;
+
 using ResponsePair = std::pair<std::string, HttpStatus>;
+
+namespace formats = userver::formats;
+namespace json = formats::json;
 
 void _throwResourceNotFound(const std::string&);
 ResponsePair _processRequest(const HttpRequest&);

@@ -42,7 +42,10 @@ std::optional<models::Customer> CustomersRepository::findByName(const std::strin
 
 size_t CustomersRepository::deleteByName(const std::string& customerName)
 {
-	unsigned bankAccountId = customers_.find(customerName)->second.getBankAccountId();
+	unsigned bankAccountId;
+	auto it = customers_.find(customerName);
+	if(it == customers_.end()) return 0;
+	bankAccountId = it->second.getBankAccountId();
 	BankAccountsRepository::get().delete_(bankAccountId);
 	return customers_.erase(customerName);
 }

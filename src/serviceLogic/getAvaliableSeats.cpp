@@ -5,9 +5,12 @@ namespace service {
 namespace logic {
 
 
-ResponsePair getAvaliableSeats(const HttpRequest& request)
+ResponsePair getAvaliableSeats(const HttpRequest&)
 {
-	return {"", HttpStatus::kOk};	
+	const SeatsVector& avaliableSeats = SeatsRepository::get().getAvaliableSeats();
+	json::ValueBuilder builder (avaliableSeats);
+	json::Value jsonValue (builder.ExtractValue());
+	return {json::ToString(jsonValue), HttpStatus::kOk};	
 }
 
 
