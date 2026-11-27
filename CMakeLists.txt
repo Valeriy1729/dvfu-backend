@@ -44,13 +44,23 @@ target_link_libraries(${PROJECT_NAME} ${PROJECT_NAME}_objs)
 
 
 # unittests
-add_executable(${PROJECT_NAME}-unittest unittests/serviceLogic_test.cpp)
+add_executable(${PROJECT_NAME}-unittest
+	unittests/bankAccount_test.cpp
+	unittests/customer_test.cpp
+	unittests/_executeWithCheck_test.cpp
+	unittests/_getArgWithCheck_test.cpp
+	unittests/_getFromOptional_test.cpp
+	unittests/_pairSerialization_test.cpp
+)
 target_link_libraries(${PROJECT_NAME}-unittest ${PROJECT_NAME}_objs userver::utest)
 add_google_tests(${PROJECT_NAME}-unittest)
 
 
 # benchmarks
-add_executable(${PROJECT_NAME}_benchmark benchmarks/benchmark.cpp)
+add_executable(${PROJECT_NAME}_benchmark
+	benchmarks/findingCustomer_bench.cpp
+	benchmarks/creatingCustmer_bench.cpp
+)
 target_link_libraries(${PROJECT_NAME}_benchmark ${PROJECT_NAME}_objs userver::ubench)
 add_google_benchmark_tests(${PROJECT_NAME}_benchmark)
 

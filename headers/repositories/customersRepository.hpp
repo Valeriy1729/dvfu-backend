@@ -4,12 +4,15 @@
 #include <optional>
 #include <unordered_map>
 #include <userver/engine/mutex.hpp>
+#include <userver/utils/rand.hpp>
 
 #include "_settings_.hpp"
 #include "models/customer.hpp"
 #include "repositories/bankAccountsRepository.hpp"
 
 namespace service {
+
+namespace utils = userver::utils;
 
 
 class CustomersRepository final {

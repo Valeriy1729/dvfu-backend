@@ -5,6 +5,8 @@ namespace service {
 namespace logic {
 
 
+userver::engine::Mutex globalMutex;
+
 ResponsePair reserveSeat(const HttpRequest& request)
 {
 	bool seatReservation;
@@ -13,7 +15,6 @@ ResponsePair reserveSeat(const HttpRequest& request)
 	std::string customerName;
 	models::Customer customer;
 
-	static userver::engine::Mutex mutex;
 	const std::string errorPrefix = "Error when reserving seat: ";
 
 	try {
@@ -46,13 +47,15 @@ ResponsePair reserveSeat(const HttpRequest& request)
 		return {errorPrefix + "Seat is already reserved\n", HttpStatus::kConflict};
 	}
 	if(customer.hasDiscount()) {
-		seatCost = std::max(seatCost - customersConstants::DISCOUNT, 0ll);			
+		seatCost = std::max(
+			seatCost - customersConstants::DISCOUNT, 0ll);			
 	}
 	if(moneyAmount < seatCost) {
 		return {errorPrefix + "Insufficient funds, balance is too low",
 			HttpStatus::kConflict};	
 	} {
-		std::lock_guard<userver::engine::Mutex> lock(mutex);
+		std::lock_guard<userver::engine::Mutex> lock(globalMutex);
+
 		seatReservation = SeatsRepository::get().getReservation(seatRow, seatColumn).value();
 		// second check
 		if(seatReservation == true) {

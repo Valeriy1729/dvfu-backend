@@ -40,7 +40,7 @@ Format Serialize(const Customer& customer,
 {
 	typename Format::Builder builder;
 	builder["name"] = customer.getName();
-	builder["hasDiscount"] = customer.hasDiscount();
+	builder["has_discount"] = customer.hasDiscount();
 	return builder.ExtractValue();
 }
 

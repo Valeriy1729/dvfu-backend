@@ -5,6 +5,8 @@
 #include <userver/server/handlers/exceptions.hpp>
 #include <userver/utils/from_string.hpp>
 
+#include "_BadRequestException.hpp"
+
 namespace service {
 
 namespace logic {

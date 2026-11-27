@@ -7,6 +7,7 @@
 
 #include "_settings_.hpp"
 #include "models/customer.hpp"
+#include "repositories/bankAccountsRepository.hpp"
 
 namespace service {
 

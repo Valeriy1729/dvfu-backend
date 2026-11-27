@@ -7,15 +7,18 @@ std::optional<models::Customer> CustomersRepository::add(
 	const std::string& name, unsigned bankAccountId) &
 {
 	std::lock_guard<userver::engine::Mutex> lock (mutex_);
-	bool isSpecialCustomer = (
-		++creatingCustomerId_ % customersConstants::DISCOUNT_PERIOD == 0);
 
+	bool isSpecialCustomer = utils::RandRange(1.0) > 0.5;
 	// customer is special => customer has discount
-	models::Customer newCustomer (name, isSpecialCustomer, creatingCustomerId_, bankAccountId);
+	models::Customer newCustomer (name, isSpecialCustomer, creatingCustomerId_++, bankAccountId);
 	std::pair<std::string, models::Customer> pair (name, newCustomer);
 	auto operationResult = customers_.insert(pair);	
-	return (operationResult.second == true ?
-		std::optional<models::Customer>(newCustomer) : std::nullopt);
+
+	if(operationResult.second == false) {
+		std::ignore = BankAccountsRepository::get().delete_(bankAccountId);
+		return std::nullopt;
+	}
+	return std::optional<models::Customer>(newCustomer);
 }
 
 bool CustomersRepository::updateCustomerName(
@@ -38,6 +41,8 @@ bool CustomersRepository::updateCustomerName(
 
 std::optional<models::Customer> CustomersRepository::findByName(const std::string& name) &
 {
+	std::lock_guard<userver::engine::Mutex> lock (mutex_);
+
 	auto it = customers_.find(name);
 	return (it != customers_.end() ?
 		std::optional<models::Customer>(it->second) : std::nullopt);
