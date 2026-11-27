@@ -10,7 +10,7 @@ unsigned BankAccount::getId() const noexcept { return id_; }
 BankAccount::OperationCode BankAccount::addMoney(long long amount) & noexcept
 {
 	OperationCode opCode {OperationCode::ERROR};
-	if(amount >= 0) {
+	if(amount > 0) {
 		moneyAmount_ += amount;	
 		opCode = OperationCode::SUCESS;
 	}

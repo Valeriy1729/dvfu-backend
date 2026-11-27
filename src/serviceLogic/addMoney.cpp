@@ -27,7 +27,7 @@ ResponsePair addMoney(const HttpRequest& request)
 				customer.getBankAccountId(), moneyAmount);
 			},
 			errorPrefix + "No bank account for such customer with name: '" +
-			customerName + "' OR 'amount' < 0\n"
+			customerName + "' OR 'amount' <= 0\n"
 		);	
 
 	} catch(_BadRequestException& exception) {
