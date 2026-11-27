@@ -1,8 +1,9 @@
 #ifndef CUSTOMERS_REPO_H
 #define CUSTOMERS_REPO_H
 
-#include <unordered_map>
 #include <optional>
+#include <unordered_map>
+#include <userver/engine/mutex.hpp>
 
 #include "_settings_.hpp"
 #include "models/customer.hpp"
@@ -13,6 +14,7 @@ namespace service {
 
 class CustomersRepository final {
 	unsigned creatingCustomerId_ {0};
+	mutable userver::engine::Mutex mutex_;
 	std::unordered_map<std::string, models::Customer> customers_;
 
 	CustomersRepository() { }

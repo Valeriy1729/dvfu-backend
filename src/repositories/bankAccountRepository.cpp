@@ -5,6 +5,8 @@ namespace service {
 
 std::optional<models::BankAccount> BankAccountsRepository::add() &
 {
+	std::lock_guard<userver::engine::Mutex> lock (mutex_);
+
 	models::BankAccount newBankAccount{++creatingBankAccountId_};
 	std::pair<unsigned, models::BankAccount> pair (creatingBankAccountId_, newBankAccount);
 	auto operationResult = bankAccounts_.insert(pair);
@@ -14,6 +16,7 @@ std::optional<models::BankAccount> BankAccountsRepository::add() &
 
 size_t BankAccountsRepository::delete_(unsigned bankAccountId) &
 {
+	std::lock_guard<userver::engine::Mutex> lock (mutex_);
 	return bankAccounts_.erase(bankAccountId);	
 }
 
@@ -26,6 +29,8 @@ std::optional<models::BankAccount> BankAccountsRepository::findById(unsigned ban
 
 bool BankAccountsRepository::addMoney(unsigned bankAccountId, long long amount)
 {
+	std::lock_guard<userver::engine::Mutex> lock (mutex_);
+
 	auto it = bankAccounts_.find(bankAccountId);	
 	if(it == bankAccounts_.end()) return false;
 	models::BankAccount::OperationCode result = it->second.addMoney(amount);
@@ -34,6 +39,8 @@ bool BankAccountsRepository::addMoney(unsigned bankAccountId, long long amount)
 
 bool BankAccountsRepository::withdrawMoney(unsigned bankAccountId, long long amount)
 {
+	std::lock_guard<userver::engine::Mutex> lock (mutex_);
+
 	auto it = bankAccounts_.find(bankAccountId);	
 	if(it == bankAccounts_.end()) return false;
 	models::BankAccount::OperationCode result = it->second.withdrawMoney(amount);

@@ -13,6 +13,7 @@ ResponsePair reserveSeat(const HttpRequest& request)
 	std::string customerName;
 	models::Customer customer;
 
+	static userver::engine::Mutex mutex;
 	const std::string errorPrefix = "Error when reserving seat: ";
 
 	try {
@@ -40,6 +41,7 @@ ResponsePair reserveSeat(const HttpRequest& request)
 		return {ex.what(), HttpStatus::kBadRequest};	
 	}
 
+	// first check
 	if(seatReservation == true) {
 		return {errorPrefix + "Seat is already reserved\n", HttpStatus::kConflict};
 	}
@@ -50,8 +52,12 @@ ResponsePair reserveSeat(const HttpRequest& request)
 		return {errorPrefix + "Insufficient funds, balance is too low",
 			HttpStatus::kConflict};	
 	} {
-		userver::engine::Mutex mutex;
 		std::lock_guard<userver::engine::Mutex> lock(mutex);
+		seatReservation = SeatsRepository::get().getReservation(seatRow, seatColumn).value();
+		// second check
+		if(seatReservation == true) {
+			return {errorPrefix + "Seat is already reserved\n", HttpStatus::kConflict};
+		}
 		std::ignore = BankAccountsRepository::get().withdrawMoney(
 			customer.getBankAccountId(), seatCost);
 		SeatsRepository::get().setReservation(seatRow, seatColumn, true);

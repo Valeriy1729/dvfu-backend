@@ -37,6 +37,8 @@ bool SeatsRepository::setReservation(size_t row, size_t column, bool value)
 
 SeatsVector SeatsRepository::getAvaliableSeats() const
 {
+	std::lock_guard<userver::engine::Mutex> lock (mutex_);
+
 	SeatsVector avaliableSeats;
 	std::pair<size_t, size_t> position;
 	for(size_t i = 0; i < seatsConstants::ROWS_COUNT; ++i) {

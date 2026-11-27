@@ -1,8 +1,10 @@
 #ifndef BANK_ACCOUNTS_REPO_H
 #define BANK_ACCOUNTS_REPO_H
 
-#include <unordered_map>
 #include <optional>
+#include <iostream>
+#include <unordered_map>
+#include <userver/engine/mutex.hpp>
 
 #include "models/bankAccount.hpp"
 
@@ -13,6 +15,7 @@ class BankAccountsRepository final {
 
 	unsigned creatingBankAccountId_ {0};
 	std::unordered_map<unsigned, models::BankAccount> bankAccounts_;
+	mutable userver::engine::Mutex mutex_;
 	BankAccountsRepository() { }
 
 public:
