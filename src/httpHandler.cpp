@@ -13,8 +13,8 @@ std::string HttpHandler::HandleRequest(
 	} catch(userver::server::handlers::CustomHandlerException& ex) {
 		throw;	// status sets by Userver
 	} catch(std::exception& ex) {
-		throw server::handlers::InternalServerError(
-			server::handlers::InternalMessage("Internal server error")
+		throw userver::server::handlers::InternalServerError(
+			userver::server::handlers::InternalMessage("Internal server error")
 		);
 	}
 	request.GetHttpResponse().SetStatus(result.second);
