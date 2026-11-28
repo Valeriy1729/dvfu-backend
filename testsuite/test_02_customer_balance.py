@@ -1,7 +1,6 @@
-async def test_balance_operations_for_success(service_client):
+async def test_balance_operations_for_success(service_client, create_customer):
     # Creating Customer
-    response = await service_client.post("/cinema-service/customers", params={"name": "Customer"})
-    assert response.status == 201
+    await create_customer("Customer")
 
     # Getting balance of Customer
     response = await service_client.get("/cinema-service/balance", params={"name": "Customer"})
@@ -16,10 +15,6 @@ async def test_balance_operations_for_success(service_client):
     response = await service_client.get("/cinema-service/balance", params={"name": "Customer"})
     assert response.status == 200
     assert response.json()['balance'] == 1000
-
-    # Deleting Customer
-    response = await service_client.delete("/cinema-service/customers", params={"name": "Customer"})
-    assert response.status == 200
 
 
 async def test_user_cannot_get_balance_of_nonexisting_customer(service_client):
@@ -41,10 +36,9 @@ async def test_user_cannot_top_balance_of_nonexisting_customer(service_client):
     assert response.status == 400
 
 
-async def test_user_cannot_top_balance_without_arguments(service_client):
+async def test_user_cannot_top_balance_without_arguments(service_client, create_customer):
     # Creating Customer
-    response = await service_client.post("/cinema-service/customers", params={"name": "Customer"})
-    assert response.status == 201
+    await create_customer("Customer")
 
     # Topping balance without name
     response = await service_client.patch("/cinema-service/balance", params={"amount": "1000"})
@@ -54,15 +48,10 @@ async def test_user_cannot_top_balance_without_arguments(service_client):
     response = await service_client.patch("/cinema-service/balance", params={"name": "Customer"})
     assert response.status == 400
 
-    # Deleting Customer
-    response = await service_client.delete("/cinema-service/customers", params={"name": "Customer"})
-    assert response.status == 200
 
-
-async def test_user_cannot_top_balance_with_strange_amount(service_client):
+async def test_user_cannot_top_balance_with_strange_amount(service_client, create_customer):
     # Creating Customer
-    response = await service_client.post("/cinema-service/customers", params={"name": "Customer"})
-    assert response.status == 201
+    await create_customer("Customer")
 
     # Topping balance with zero amount
     response = await service_client.patch("/cinema-service/balance",
@@ -89,12 +78,11 @@ async def test_user_cannot_top_balance_with_strange_amount(service_client):
                     params={"name": "Customer", "amount": "thousand"})
     assert response.status == 400
 
-    # Deleting Customer
-    response = await service_client.delete("/cinema-service/customers", params={"name": "Customer"})
-    assert response.status == 200
 
+async def test_topping_balance_with_big_amount(service_client, create_customer):
+    # Creating Customer
+    await create_customer("Customer")
 
-async def test_topping_balance_with_big_amount(service_client):
     # Topping balance with too big amount
     response = await service_client.patch("/cinema-service/balance",
                     params={"name": "Customer", "amount": str(10 ** 100)})

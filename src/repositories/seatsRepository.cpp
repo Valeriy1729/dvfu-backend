@@ -10,32 +10,38 @@ SeatsRepository::SeatsRepository() : costs_ (seatsConstants::costs)
 	});
 }
 
-bool SeatsRepository::isValidIndexes(size_t row, size_t column) const
+bool SeatsRepository::isValidIndexes(size_t row, size_t column) const &
 {
 	return row < seatsConstants::ROWS_COUNT &&
 	       column < seatsConstants::COLUMNS_COUNT;
 }
 
-std::optional<long long> SeatsRepository::getCost(size_t row, size_t column) const
+std::optional<long long> SeatsRepository::getCost(size_t row, size_t column) const &
 {
+	std::lock_guard<userver::engine::Mutex> lock (mutex_);
+
 	if(!isValidIndexes(row, column)) return std::nullopt;
 	return costs_[row][column];
 }
 
-std::optional<bool> SeatsRepository::getReservation(size_t row, size_t column) const
+std::optional<bool> SeatsRepository::getReservation(size_t row, size_t column) const &
 {
+	std::lock_guard<userver::engine::Mutex> lock (mutex_);
+
 	if(!isValidIndexes(row, column)) return std::nullopt;
 	return reservations_[row][column];
 }
 
-bool SeatsRepository::setReservation(size_t row, size_t column, bool value)
+bool SeatsRepository::setReservation(size_t row, size_t column, bool value) &
 {
+	std::lock_guard<userver::engine::Mutex> lock (mutex_);
+
 	if(!isValidIndexes(row, column)) return false;
 	reservations_[row][column] = value;
 	return true;
 }
 
-SeatsVector SeatsRepository::getAvaliableSeats() const
+SeatsVector SeatsRepository::getAvaliableSeats() const &
 {
 	std::lock_guard<userver::engine::Mutex> lock (mutex_);
 
@@ -48,6 +54,15 @@ SeatsVector SeatsRepository::getAvaliableSeats() const
 		}
 	}
 	return avaliableSeats;
+}
+
+void SeatsRepository::reset() &
+{
+	std::lock_guard<userver::engine::Mutex> lock (mutex_);
+
+	std::for_each(reservations_.begin(), reservations_.end(), [](auto& row) {
+		std::fill(row.begin(), row.end(), false);
+	});
 }
 
 SeatsRepository& SeatsRepository::get()

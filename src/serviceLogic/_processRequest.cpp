@@ -24,6 +24,7 @@ ResponsePair _processRequest(const HttpRequest& request)
 			break;
 		case HttpMethod::kDelete:
 			if(suffix == "customers") result = deleteCustomer(request);
+			else if(suffix == "reset") result = resetService(request);
 			else _throwResourceNotFound("Unknown suffix for method DELETE");
 			break;
 		case HttpMethod::kPatch:

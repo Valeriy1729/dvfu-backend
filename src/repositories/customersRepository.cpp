@@ -48,7 +48,7 @@ std::optional<models::Customer> CustomersRepository::findByName(const std::strin
 		std::optional<models::Customer>(it->second) : std::nullopt);
 }
 
-size_t CustomersRepository::deleteByName(const std::string& customerName)
+size_t CustomersRepository::deleteByName(const std::string& customerName) &
 {
 	std::lock_guard<userver::engine::Mutex> lock (mutex_);
 
@@ -58,6 +58,12 @@ size_t CustomersRepository::deleteByName(const std::string& customerName)
 	bankAccountId = it->second.getBankAccountId();
 	BankAccountsRepository::get().delete_(bankAccountId);
 	return customers_.erase(customerName);
+}
+
+void CustomersRepository::reset() &
+{
+	std::lock_guard<userver::engine::Mutex> lock (mutex_);
+	customers_.clear();	
 }
 
 CustomersRepository& CustomersRepository::get()

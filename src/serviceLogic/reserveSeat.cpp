@@ -5,7 +5,7 @@ namespace service {
 namespace logic {
 
 
-userver::engine::Mutex globalMutex;
+userver::engine::Mutex reserveSeatMutex;
 
 ResponsePair reserveSeat(const HttpRequest& request)
 {
@@ -42,27 +42,33 @@ ResponsePair reserveSeat(const HttpRequest& request)
 		return {ex.what(), HttpStatus::kBadRequest};	
 	}
 
-	// first check
-	if(seatReservation == true) {
-		return {errorPrefix + "Seat is already reserved\n", HttpStatus::kConflict};
-	}
 	if(customer.hasDiscount()) {
 		seatCost = std::max(
 			seatCost - customersConstants::DISCOUNT, 0ll);			
+	}
+
+	// first checks
+	if(seatReservation == true) {
+		return {errorPrefix + "Seat is already reserved\n", HttpStatus::kConflict};
 	}
 	if(moneyAmount < seatCost) {
 		return {errorPrefix + "Insufficient funds, balance is too low",
 			HttpStatus::kConflict};	
 	} {
-		std::lock_guard<userver::engine::Mutex> lock(globalMutex);
+		std::lock_guard<userver::engine::Mutex> lock(reserveSeatMutex);
 
 		seatReservation = SeatsRepository::get().getReservation(seatRow, seatColumn).value();
-		// second check
+
+		// second checks
 		if(seatReservation == true) {
 			return {errorPrefix + "Seat is already reserved\n", HttpStatus::kConflict};
 		}
-		std::ignore = BankAccountsRepository::get().withdrawMoney(
-			customer.getBankAccountId(), seatCost);
+		if(!BankAccountsRepository::get().withdrawMoney(
+			customer.getBankAccountId(), seatCost)) {
+			return {errorPrefix + "Insufficient funds, balance is too low",
+				HttpStatus::kConflict};	
+		}
+
 		SeatsRepository::get().setReservation(seatRow, seatColumn, true);
 	}
 

@@ -32,6 +32,7 @@ add_library(${PROJECT_NAME}_objs OBJECT
 	src/serviceLogic/getAvaliableSeats.cpp
 	src/serviceLogic/getBalance.cpp
 	src/serviceLogic/reserveSeat.cpp
+	src/serviceLogic/resetService.cpp
 )
 
 target_link_libraries(${PROJECT_NAME}_objs userver::core)

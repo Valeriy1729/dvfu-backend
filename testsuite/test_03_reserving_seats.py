@@ -1,15 +1,12 @@
-async def test_seat_can_be_reserverd_only_once(service_client):
-    # Creating Customer
-    response = await service_client.post("/cinema-service/customers", params={"name": "Customer"})
-    assert response.status == 201
+async def test_seat_can_be_reserverd_only_once(
+        service_client, create_customer, top_customer_balance):
 
-    # Creating Customer1
-    response = await service_client.post("/cinema-service/customers", params={"name": "Customer1"})
-    assert response.status == 201
+    # Creating customers
+    await create_customer("Customer")
+    await create_customer("Customer1")
 
     # Topping Customer's balance
-    response = await service_client.patch("/cinema-service/balance", params={"name": "Customer", "amount": "5000"})
-    assert response.status == 200
+    await top_customer_balance("Customer", 5000)
 
     # Reserving seat (row=0, column=0)
     response = await service_client.patch("/cinema-service/reserve",
@@ -26,23 +23,15 @@ async def test_seat_can_be_reserverd_only_once(service_client):
                 params={"name": "Customer1", "row": "0", "column": "0"})
     assert response.status == 409
 
-    # Deleting Customer
-    response = await service_client.delete("/cinema-service/customers", params={"name": "Customer"})
-    assert response.status == 200
 
-    # Deleting Customer1
-    response = await service_client.delete("/cinema-service/customers", params={"name": "Customer1"})
-    assert response.status == 200
+async def test_strange_arguments_when_reserving_seat(
+        service_client, create_customer, top_customer_balance):
 
-
-async def test_strange_arguments_when_reserving_seat(service_client):
     # Creating Customer
-    response = await service_client.post("/cinema-service/customers", params={"name": "Customer"})
-    assert response.status == 201
+    await create_customer("Customer")
 
     # Topping Customer's balance
-    response = await service_client.patch("/cinema-service/balance", params={"name": "Customer", "amount": "5000"})
-    assert response.status == 200
+    await top_customer_balance("Customer", 5000)
 
     # Reserving seat with row and column out of range
     response = await service_client.patch("/cinema-service/reserve",
@@ -84,10 +73,6 @@ async def test_strange_arguments_when_reserving_seat(service_client):
                 params={"name": "Customer", "row": "0", "column": "abc"})
     assert response.status == 400
 
-    # Deleting Customer
-    response = await service_client.delete("/cinema-service/customers", params={"name": "Customer"})
-    assert response.status == 200
-
 
 async def test_reserving_seat_with_huge_name(service_client):
     # Reserving seat with too big customer name
@@ -96,39 +81,32 @@ async def test_reserving_seat_with_huge_name(service_client):
     assert response.status == 414
 
 
-async def test_reserving_seat_with_huge_row(service_client):
+async def test_reserving_seat_with_huge_row(
+        service_client, create_customer, top_customer_balance):
+
     # Creating Customer
-    response = await service_client.post("/cinema-service/customers", params={"name": "Customer"})
-    assert response.status == 201
+    await create_customer("Customer")
 
     # Topping Customer's balance
-    response = await service_client.patch("/cinema-service/balance", params={"name": "Customer", "amount": "5000"})
-    assert response.status == 200
+    await top_customer_balance("Customer", 5000)
 
     # Reserving seat with huge row
     response = await service_client.patch("/cinema-service/reserve",
                 params={"name": "Customer", "row": "1" * 10_000, "column": "0"})
     assert response.status == 414
 
-    # Deleting Customer
-    response = await service_client.delete("/cinema-service/customers", params={"name": "Customer"})
-    assert response.status == 200
 
+async def test_reserving_seat_with_huge_column(
+        service_client, create_customer, top_customer_balance):
 
-async def test_reserving_seat_with_huge_column(service_client):
     # Creating Customer
-    response = await service_client.post("/cinema-service/customers", params={"name": "Customer"})
-    assert response.status == 201
+    await create_customer("Customer")
 
     # Topping Customer's balance
-    response = await service_client.patch("/cinema-service/balance", params={"name": "Customer", "amount": "5000"})
-    assert response.status == 200
+    await top_customer_balance("Customer", 5000)
 
     # Reserving seat with huge column
     response = await service_client.patch("/cinema-service/reserve",
                 params={"name": "Customer", "row": "0", "column": "1" * 10_000})
     assert response.status == 414
 
-    # Deleting Customer
-    response = await service_client.delete("/cinema-service/customers", params={"name": "Customer"})
-    assert response.status == 200

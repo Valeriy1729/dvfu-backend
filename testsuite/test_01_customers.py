@@ -1,3 +1,5 @@
+import pytest
+
 async def test_CRUD_for_success(service_client):
     # Creating Customer
     response = await service_client.post("/cinema-service/customers", params={"name": "Customer"})
@@ -65,22 +67,17 @@ async def test_huge_name_when_creating(service_client):
     assert response.status == 414
 
 
-async def test_huge_new_name_when_updating(service_client):
+async def test_huge_new_name_when_updating(service_client, create_customer):
     # Creating Customer
-    response = await service_client.post("/cinema-service/customers", params={"name": "Customer"})
-    assert response.status == 201
+    await create_customer("Customer")
 
     # Updating customer with too long new_name
     response = await service_client.patch("/cinema-service/customers",
             params={"name": "Customer", "new_name": "a" * 10_000})
     assert response.status == 414
 
-    # Deleting Customer
-    response = await service_client.delete("/cinema-service/customers", params={"name": "Customer"})
-    assert response.status == 200
 
-
-async def test_huge_new_name_when_updating(service_client):
+async def test_huge_name_when_updating(service_client):
     # Updating customer with too long new_name
     response = await service_client.patch("/cinema-service/customers",
             params={"name": "a" * 10_000, "new_name": "NewCustomer"})
@@ -101,39 +98,21 @@ async def test_huge_name_when_deleting(service_client):
     assert response.status == 414
 
 
-async def test_create_same_customer_twice(service_client):
+async def test_create_same_customer_twice(service_client, create_customer):
     # Creating Customer
-    response = await service_client.post("/cinema-service/customers", params={"name": "Customer"})
-    assert response.status == 201
+    await create_customer("Customer")
 
     # Creating Customer again
     response = await service_client.post("/cinema-service/customers", params={"name": "Customer"})
     assert response.status == 400
 
-    # Deleting Customer
-    response = await service_client.delete("/cinema-service/customers", params={"name": "Customer"})
-    assert response.status == 200
 
-
-async def test_updating_to_existing_customer(service_client):
-    # Creating Customer1
-    response = await service_client.post("/cinema-service/customers", params={"name": "Customer1"})
-    assert response.status == 201
-
-    # Creating Customer2
-    response = await service_client.post("/cinema-service/customers", params={"name": "Customer2"})
-    assert response.status == 201
+async def test_updating_to_existing_customer(service_client, create_customer):
+    # Creating customers
+    await create_customer("Customer1")
+    await create_customer("Customer2")
 
     # Updating Customer1 to Customer2
     response = await service_client.patch("/cinema-service/customers",
             params={"name": "Customer1", "new_name": "Customer2"})
     assert response.status == 400
-
-    # Deleting Customer1
-    response = await service_client.delete("/cinema-service/customers", params={"name": "Customer1"})
-    assert response.status == 200
-
-    # Deleting Customer2
-    response = await service_client.delete("/cinema-service/customers", params={"name": "Customer2"})
-    assert response.status == 200
-

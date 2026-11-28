@@ -49,6 +49,7 @@ ResponsePair addMoney(const HttpRequest&);
 ResponsePair getBalance(const HttpRequest&);
 ResponsePair reserveSeat(const HttpRequest&);
 ResponsePair getAvaliableSeats(const HttpRequest&);
+ResponsePair resetService(const HttpRequest&);
 
 
 }  // logic

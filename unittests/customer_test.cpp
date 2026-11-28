@@ -7,7 +7,7 @@ using service::models::Customer;
 namespace json = userver::formats::json;
 
 
-UTEST(customerTests, Basic) {
+UTEST(customerConstructor_Test, Basic) {
 	Customer customer {"Bob", false, 10, 20};		
 	EXPECT_EQ(customer.getName(), "Bob");
 	EXPECT_EQ(customer.hasDiscount(), false);
@@ -15,13 +15,13 @@ UTEST(customerTests, Basic) {
 	EXPECT_EQ(customer.getBankAccountId(), 20);
 }
 
-UTEST(customerUpdateNameTest, Basic) {
+UTEST(customerUpdateName_Test, Basic) {
 	Customer customer {"John", true, 1, 2};	
 	customer.updateName("Alex");
 	EXPECT_EQ(customer.getName(), "Alex");
 }
 
-UTEST(customerJsonSerializationTest, Basic) {
+UTEST(customerJsonSerialization_Test, Basic) {
 	Customer customer {"John", true, 1, 2};	
 	json::ValueBuilder builder {customer};	
 	json::Value jsonValue {builder.ExtractValue()};

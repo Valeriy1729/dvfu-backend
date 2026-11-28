@@ -8,6 +8,8 @@
 
 #include "_settings_.hpp"
 #include "models/customer.hpp"
+
+#include "repositories/IRepository.hpp"
 #include "repositories/bankAccountsRepository.hpp"
 
 namespace service {
@@ -15,7 +17,9 @@ namespace service {
 namespace utils = userver::utils;
 
 
-class CustomersRepository final {
+class CustomersRepository final
+	: public IRepository<CustomersRepository> {
+
 	unsigned creatingCustomerId_ {0};
 	mutable userver::engine::Mutex mutex_;
 	std::unordered_map<std::string, models::Customer> customers_;
@@ -29,7 +33,9 @@ public:
 	std::optional<models::Customer> add(const std::string& name, unsigned bankAccountId) &;
 	bool updateCustomerName(const std::string& customerName, const std::string& newCustomerName) &;
 	std::optional<models::Customer> findByName(const std::string& name) &;
-	size_t deleteByName(const std::string& customerName);
+	size_t deleteByName(const std::string& customerName) &;
+
+	virtual void reset() &;
 
 	static CustomersRepository& get();
 };

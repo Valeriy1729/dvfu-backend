@@ -29,7 +29,7 @@ std::optional<models::BankAccount> BankAccountsRepository::findById(unsigned ban
 		std::optional<models::BankAccount>(it->second) : std::nullopt);
 }
 
-bool BankAccountsRepository::addMoney(unsigned bankAccountId, long long amount)
+bool BankAccountsRepository::addMoney(unsigned bankAccountId, long long amount) &
 {
 	std::lock_guard<userver::engine::Mutex> lock (mutex_);
 
@@ -39,7 +39,7 @@ bool BankAccountsRepository::addMoney(unsigned bankAccountId, long long amount)
 	return (result == models::BankAccount::OperationCode::SUCESS ? true : false);
 }
 
-bool BankAccountsRepository::withdrawMoney(unsigned bankAccountId, long long amount)
+bool BankAccountsRepository::withdrawMoney(unsigned bankAccountId, long long amount) &
 {
 	std::lock_guard<userver::engine::Mutex> lock (mutex_);
 
@@ -56,6 +56,12 @@ std::optional<long long> BankAccountsRepository::getMoneyAmountById(unsigned ban
 	auto it = bankAccounts_.find(bankAccountId);		
 	if(it == bankAccounts_.end()) return std::nullopt;
 	return it->second.getMoneyAmount();
+}
+
+void BankAccountsRepository::reset() &
+{
+	std::lock_guard<userver::engine::Mutex> lock (mutex_);
+	bankAccounts_.clear();			
 }
 
 BankAccountsRepository& BankAccountsRepository::get()

@@ -1,9 +1,8 @@
 async def test_getting_avaliable_seats_is_successful(service_client):
     # Getting avaliable seats
-    # [[0,0],1000] was reserved in test_03_reserving_seats.py
     response = await service_client.get("/cinema-service/seats")
     expected_string: str = (
-         "[[[0,1],1100],"
+         "[[[0,0],1000],[[0,1],1100],"
          "[[0,2],1200],[[0,3],1100],[[0,4],1000],[[1,0],1100],"
          "[[1,1],1200],[[1,2],1300],[[1,3],1200],[[1,4],1100],"
          "[[2,0],1200],[[2,1],1300],[[2,2],1500],[[2,3],1300],"
@@ -16,26 +15,23 @@ async def test_getting_avaliable_seats_is_successful(service_client):
     assert response.text == expected_string
 
 
-async def test_only_avaliable_seats_are_taken(service_client):
+async def test_only_avaliable_seats_are_taken(
+        service_client, create_customer, top_customer_balance, reserve_seat):
+
     # Creating Customer
-    response = await service_client.post("/cinema-service/customers", params={"name": "Customer"})
-    assert response.status == 201
+    await create_customer("Customer")
 
     # Topping Customer's balance
-    response = await service_client.patch("/cinema-service/balance", params={"name": "Customer", "amount": "5000"})
-    assert response.status == 200
+    await top_customer_balance("Customer", 5000)
 
-    # Reserving seat (row=0, column=1)
-    response = await service_client.patch("/cinema-service/reserve",
-                params={"name": "Customer", "row": "0", "column": "1"})
-    assert response.status == 200
+    # Reserving seat (row=0, column=0)
+    await reserve_seat("Customer", 0, 0)
 
     # Getting avaliable seats
-    # [[0,0],1000] was reserved in test_03_reserving_seats.py
-    # [[0,1],1100] was just reserved
+    # [[0,0],1000] was just reserved
     response = await service_client.get("/cinema-service/seats")
     expected_string: str = (
-         "[[[0,2],1200],[[0,3],1100],[[0,4],1000],[[1,0],1100],"
+         "[[[0,1],1100],[[0,2],1200],[[0,3],1100],[[0,4],1000],[[1,0],1100],"
          "[[1,1],1200],[[1,2],1300],[[1,3],1200],[[1,4],1100],"
          "[[2,0],1200],[[2,1],1300],[[2,2],1500],[[2,3],1300],"
          "[[2,4],1200],[[3,0],1100],[[3,1],1200],[[3,2],1300],"
@@ -45,8 +41,4 @@ async def test_only_avaliable_seats_are_taken(service_client):
     )
     assert response.status == 200
     assert response.text == expected_string
-
-    # Deleting Customer
-    response = await service_client.delete("/cinema-service/customers", params={"name": "Customer"})
-    assert response.status == 200
 

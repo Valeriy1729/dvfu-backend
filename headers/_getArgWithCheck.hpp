@@ -30,7 +30,7 @@ template <> inline std::string _getArgWithCheck(
 template <std::integral T> inline T _getArgWithCheck(
 	const HttpRequest& request, const std::string& argName, const std::string& errorPrefix)
 {
-	T argumentIntegral;
+	T argumentIntegral {};
 	std::string argument = request.GetArg(argName);		
 	if(argument.empty())
 		throw _BadRequestException(

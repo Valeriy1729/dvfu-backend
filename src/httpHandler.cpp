@@ -10,10 +10,12 @@ std::string HttpHandler::HandleRequest(
 	std::pair<std::string, logic::HttpStatus> result;
        	try {
 		result = logic::_processRequest(request);
+	} catch(userver::server::handlers::CustomHandlerException& ex) {
+		throw;	// status sets by Userver
 	} catch(std::exception& ex) {
-		request.GetHttpResponse().SetStatus(
-			userver::server::http::HttpStatus::kBadRequest);
-		return ex.what();
+		throw server::handlers::InternalServerError(
+			server::handlers::InternalMessage("Internal server error")
+		);
 	}
 	request.GetHttpResponse().SetStatus(result.second);
 	return result.first;
